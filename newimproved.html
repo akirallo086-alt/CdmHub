@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDMHUB Shop - Uniforms & Gear</title>
+    <style>
+        /* Shop Global Variables */
+        :root {
+            --primary-color: #004b9c; /* Deep Professional Blue */
+            --secondary-color: #ff8c00; /* Vibrant Orange for 'Pre-Loved' */
+            --text-color: #212529;
+            --light-bg: #f5f7f9;
+            --card-bg: #ffffff;
+            --border-color: #e0e4e8;
+            --success-color: #28a745;
+            --condition-good: #ffb347;
+            --condition-excellent: #20b2aa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            border-radius: 8px; 
+            transition: color 0.2s; /* Global smooth transition for colors */
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            min-height: 150vh; /* Added height for testing scroll effect */
+        }
+
+        /* --- Header & Navigation Improvements (Start) --- */
+        .shop-header {
+            /* Professional Sticky Header Setup */
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: var(--card-bg);
+            box-shadow: 0 0 0 rgba(0,0,0,0.0); /* Initial subtle shadow */
+            transition: box-shadow 0.3s ease-in-out;
+            z-index: 20;
+        }
+
+        /* Shadow applied via JS when scrolling starts */
+        .shop-header.scrolled {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .logo:hover {
+            transform: scale(1.02); /* Subtle hover effect */
+        }
+
+        .university-logo {
+            height: 35px; 
+            margin-right: 10px;
+        }
+
+        /* Search Bar Refinements */
+        .search-bar {
+            position: relative;
+            width: 450px;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 12px 20px;
+            padding-left: 45px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            background-color: #fcfdfe;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-bar input:focus {
+             border-color: var(--primary-color);
+             box-shadow: 0 0 0 3px rgba(0, 75, 156, 0.2); /* Animated focus effect */
+        }
+        .search-bar::before {
+            content: '🔍';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .user-nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 5px 10px;
+            transition: color 0.2s;
+        }
+
+        /* Cart Button Animation (Keyframe) */
+        @keyframes cartWobble {
+            0%, 100% { transform: rotate(0deg); }
+            15% { transform: rotate(5deg); }
+            30% { transform: rotate(-5deg); }
+            45% { transform: rotate(5deg); }
+            60% { transform: rotate(-2deg); }
+        }
+
+        .cart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 18px;
+            transition: background-color 0.2s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .cart-btn:hover {
+            background-color: #003774;
+            animation: cartWobble 0.8s ease-in-out; /* Apply wobble animation on hover */
+        }
+
+        .sell-btn {
+            color: var(--secondary-color);
+            border: 2px solid var(--secondary-color);
+            padding: 10px 18px;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .sell-btn:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: transparent;
+        }
+        /* --- Header & Navigation Improvements (End) --- */
+
+
+        /* --- Main Shop Layout --- */
+        .shop-container {
+            display: flex;
+            padding: 30px 40px;
+            gap: 30px;
+        }
+        
+        /* Responsive adjustments for mobile */
+        @media (max-width: 1024px) {
+            .shop-header {
+                flex-direction: column;
+                padding: 15px 20px;
+                position: static; /* Disable sticky on small screens */
+            }
+            .search-bar { order: 3; width: 100%; margin-top: 15px; }
+            .user-nav { margin-top: 15px; }
+            .shop-container { flex-direction: column; padding: 20px; }
+            .shop-sidebar { width: 100%; position: static; margin-bottom: 20px; }
+            .product-grid { grid-template-columns: 1fr; }
+        }
+
+
+        /* --- Sidebar (Filters) Improvement --- */
+        .shop-sidebar {
+            width: 280px; 
+            min-width: 280px;
+            background-color: var(--card-bg);
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            align-self: flex-start; 
+            position: sticky;
+            top: 90px; /* Adjusted to be below the sticky header */
+            z-index: 10;
+        }
+
+        .shop-sidebar h3 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 22px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .filter-group {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .filter-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .filter-group h4 {
+            font-size: 17px;
+            margin-bottom: 12px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .filter-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            padding: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.15s, color 0.15s;
+            border-radius: 4px;
+        }
+        .filter-group label:hover {
+            background-color: var(--light-bg);
+        }
+
+        .filter-group input[type="checkbox"],
+        .filter-group input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--primary-color); 
+            transform: scale(1.1);
+        }
+
+
+        /* --- Product Grid --- */
+        .product-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-grid h2 {
+            grid-column: 1 / -1;
+            margin-bottom: 15px;
+            font-size: 26px;
+            color: var(--text-color);
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border: 1px solid #ddd;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; /* Smooth card movement */
+            display: flex; 
+            flex-direction: column;
+            min-height: 400px;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .product-card.hidden {
+            display: none;
+        }
+
+        .product-image {
+            height: 200px;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+
+        .product-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-type {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            align-self: flex-start;
+            letter-spacing: 0.5px;
+        }
+
+        .new-tag {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .pre-loved-tag {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .product-title {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .product-desc {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 15px;
+            flex-grow: 1; 
+        }
+
+        .condition-good { color: var(--condition-good); font-weight: 700; }
+        .condition-excellent { color: var(--condition-excellent); font-weight: 700; }
+
+        .price {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .add-to-cart:hover {
+            background-color: #003774;
+        }
+        .add-to-cart:active {
+            transform: scale(0.98);
+        }
+
+        .stock-status {
+            display: block;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #555;
+            font-weight: 600;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <header class="shop-header" id="shop-header">
+        <div class="logo">
+            CDMHUB 
+        </div>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search Uniforms, PE Gear, or Pre-Loved...">
+        </div>
+        <nav class="user-nav">
+            <a href="#" class="nav-item">Account</a>
+            <a href="#" class="nav-item cart-btn">
+                Cart (0)
+            </a>
+            <a href="sell-gear-form.html" class="nav-item sell-btn">
+                Sell
+            </a>
+        </nav>
+    </header>
+
+    <main class="shop-container">
+        <!-- Sidebar for Filtering -->
+        <aside class="shop-sidebar">
+            <h3>Filter Products</h3>
+            
+            <!-- Category Filter: Restricted to school items -->
+            <div class="filter-group category-filter">
+                <h4>Category</h4>
+                <label><input type="checkbox" value="all" checked> All Products</label>
+                <label><input type="checkbox" value="uniforms"> Top Uniforms</label>
+                <label><input type="checkbox" value="uniforms"> Uniform Pants/Skirts</label>
+                <label><input type="checkbox" value="pe"> PE Pants</label>
+                <label><input type="checkbox" value="institute"> Institute Shirts (IT, CPE, IBE, ITE)</label>
+            </div>
+
+            <!-- Inventory Type Filter -->
+            <div class="filter-group inventory-type">
+                <h4>Inventory Type</h4>
+                <label><input type="radio" name="inv-type" value="all" checked> All Types</label>
+                <label><input type="radio" name="inv-type" value="new"> New (Manufacturer)</label>
+                <label><input type="radio" name="inv-type" value="pre-loved"> Pre-Loved (Student)</label>
+            </div>
+
+            <!-- Condition Filter: Restricted to Excellent and Good -->
+            <div class="filter-group condition-filter">
+                <h4>Condition (Pre-Loved)</h4>
+                <label><input type="checkbox" value="excellent"> Excellent</label>
+                <label><input type="checkbox" value="good"> Good</label>
+            </div>
+        </aside>
+
+        <!-- Product Listing Grid -->
+        <section class="product-grid">
+            <h2>Featured Uniforms & Gear</h2>
+
+            <!-- 1. NEW - Uniform Set (Top/Bottom) -->
+            <div class="product-card" data-category="uniforms" data-type="new" data-condition="N/A">
+                <div class="product-image">
+                    <img src="https://scontent.fmnl17-8.fna.fbcdn.net/v/t39.30808-6/562350253_692914637187177_4283950211699887460_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFR3OVj5keoIdjEceGEQR11Z9SFd5hzD_xn1IV3mHMP_Mdl7nteB8Dy2Spp6cRMY_-QqyLz2oMZJzd8uUdUebgt&_nc_ohc=2yihVqiWWBwQ7kNvwFlXdnJ&_nc_oc=AdkaXeBPX3NUncNA0HdlqsoWBjRJOR-iKjANA8SnBWFAtcD8ScJz7kKnMNbp1npOlu0&_nc_zt=23&_nc_ht=scontent.fmnl17-8.fna&_nc_gid=LQ2xkVTLjTR_DpWMPNzYgQ&oh=00_AfglRFwFWfUTycbbyoukyvX6hai7Wo1yu1KMDnVdqg9_Tg&oe=692A0014">
+                </div>
+                <div class="product-info">
+                    <span class="product-type new-tag">NEW</span>
+                    <h4 class="product-title">CDM Polo Shirt</h4>
+                    <p class="product-desc">high-quality fabric. </p>
+                    <div class="price">₱470.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">In Stock: 250+</span>
+                </div>
+            </div>
+
+            <!-- 2. PRE-LOVED - PE Pants (Good) -->
+            <div class="product-card" data-category="pe" data-type="pre-loved" data-condition="good">
+                <div class="product-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUDG-dzlMrW2u1iSGAQV7QazhFMgio_el_8Q&s" alt="PE Pants Used">
+                </div>
+                <div class="product-info">
+                    <span class="product-type pre-loved-tag">PRE-LOVED</span>
+                    <h4 class="product-title">PE Jogging Pants (Size M)</h4>
+                    <p class="product-desc condition-good">Condition: Good (Minor fading on knee area, zipper functional)</p>
+                    <div class="price">₱270.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">Only 1 available!</span>
+                </div>
+            </div>
+
+            <!-- 3. NEW - PE Pants -->
+            <div class="product-card" data-category="pe" data-type="new" data-condition="N/A">
+                <div class="product-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-2Tu03ha_A5kEpC9gl7nIe9REkcO9JYN1Lg&s" alt="PE Pants New">
+                </div>
+                <div class="product-info">
+                    <span class="product-type new-tag">NEW</span>
+                    <h4 class="product-title">PE Pants </h4>
+                    <p class="product-desc">Durable material. All sizes available.</p>
+                    <div class="price">₱350.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">In Stock: 50+</span>
+                </div>
+            </div>
+
+            <!-- 4. PRE-LOVED - Institute Shirt (Excellent) -->
+            <div class="product-card" data-category="institute" data-type="pre-loved" data-condition="excellent">
+                <div class="product-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD0nFC3exOeGw1uVAPTV4M4cNE4UiKoVOHpA&s" alt="IT Institute Shirt">
+                </div>
+                <div class="product-info">
+                    <span class="product-type pre-loved-tag">PRE-LOVED</span>
+                    <h4 class="product-title">Institute Shirt - ICS (Size L)</h4>
+                    <p class="product-desc condition-excellent">Condition: Excellent (Worn once for a school event)</p>
+                    <div class="price">₱470.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">Only 1 available!</span>
+                </div>
+            </div>
+            
+            <!-- 5. NEW - Uniform Pants (Trousers) -->
+            <div class="product-card" data-category="uniforms" data-type="new" data-condition="N/A">
+                <div class="product-image">
+                    <img src="data:image/jpeg;base64,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" alt="Uniform Pants">
+                </div>
+                <div class="product-info">
+                    <span class="product-type new-tag">NEW</span>
+                    <h4 class="product-title">Uniform Pants (Male)</h4>
+                    <p class="product-desc">Standard Navy Blue trousers/slacks. All sizes.</p>
+                    <div class="price">₱250.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">In Stock: 180+</span>
+                </div>
+            </div>
+
+            <!-- 6. PRE-LOVED - Uniform Skirt (Excellent) -->
+            <div class="product-card" data-category="uniforms" data-type="pre-loved" data-condition="excellent">
+                <div class="product-image">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRyW_v0JJi92jV6-v83umnWgLEzGxoql5eMJ2KGBWqSdQZ7aELiZcKdr4&s" alt="Uniform Skirt Used">
+                </div>
+                <div class="product-info">
+                    <span class="product-type pre-loved-tag">PRE-LOVED</span>
+                    <h4 class="product-title">Uniform Skirt (Size 28)</h4>
+                    <p class="product-desc condition-excellent">Condition: Excellent (No wrinkles or stains)</p>
+                    <div class="price">₱400.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">Only 1 available!</span>
+                </div>
+            </div>
+
+             <!-- 7. NEW - IBE Institute Shirt -->
+            <div class="product-card" data-category="institute" data-type="new" data-condition="N/A">
+                <div class="product-image">
+                    <img src="data:image/jpeg;base64,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" alt="IBE Institute Shirt">
+                </div>
+                <div class="product-info">
+                    <span class="product-type new-tag">NEW</span>
+                    <h4 class="product-title">IBE Institute Shirt</h4>
+                    <p class="product-desc">Mandatory shirt for Institute of Business Education students.</p>
+                    <div class="price">₱470.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">In Stock: 90+</span>
+                </div>
+            </div>
+
+            <!-- 8. PRE-LOVED - Uniform Top (Good) -->
+            <div class="product-card" data-category="uniforms" data-type="pre-loved" data-condition="good">
+                <div class="product-image">
+                    <img src="https://placehold.co/280x200/D3D3D3/333333?text=USED+UNIFORM" alt="Uniform Top Used">
+                </div>
+                <div class="product-info">
+                    <span class="product-type pre-loved-tag">PRE-LOVED</span>
+                    <h4 class="product-title">Top Uniform (Size S)</h4>
+                    <p class="product-desc condition-good">Condition: Good </p>
+                    <div class="price">₱350.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">Only 1 available!</span>
+                </div>
+            </div>
+
+            <!-- 9. NEW - CPE Institute Shirt -->
+            <div class="product-card" data-category="institute" data-type="new" data-condition="N/A">
+                <div class="product-image">
+                    <img src="https://placehold.co/280x200/17a2b8/FFFFFF?text=CPE+SHIRT" alt="CPE Institute Shirt">
+                </div>
+                <div class="product-info">
+                    <span class="product-type new-tag">NEW</span>
+                    <h4 class="product-title">CPE Institute Shirt (Medium)</h4>
+                    <p class="product-desc">Official shirt for Computer Engineering students.</p>
+                    <div class="price">₱400.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">In Stock: 75+</span>
+                </div>
+            </div>
+
+            <!-- 10. PRE-LOVED - PE Pants (Excellent) -->
+            <div class="product-card" data-category="pe" data-type="pre-loved" data-condition="excellent">
+                <div class="product-image">
+                    <img src="https://placehold.co/280x200/3c3c3c/FFFFFF?text=PE+PANTS" alt="PE Pants Used Excellent">
+                </div>
+                <div class="product-info">
+                    <span class="product-type pre-loved-tag">PRE-LOVED</span>
+                    <h4 class="product-title">PE Pants (Size L)</h4>
+                    <p class="product-desc condition-excellent">Condition: Excellent (Barely used, like new)</p>
+                    <div class="price">₱400.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <span class="stock-status">Only 1 available!</span>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Select all relevant elements from the HTML
+            const productCards = document.querySelectorAll('.product-card');
+            const inventoryTypeRadios = document.querySelectorAll('.inventory-type input[type="radio"]');
+            const conditionCheckboxes = document.querySelectorAll('.condition-filter input[type="checkbox"]');
+            const categoryCheckboxes = document.querySelectorAll('.category-filter input[type="checkbox"]');
+            const cartCountElement = document.querySelector('.cart-btn');
+            const searchInput = document.getElementById('search-input');
+            const header = document.getElementById('shop-header'); // Get the header element
+            
+            let cartCount = 0; 
+            // Read CSS variables for dynamic feedback colors
+            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+            const successColor = getComputedStyle(document.documentElement).getPropertyValue('--success-color').trim();
+
+            /**
+             * Handles the filter logic (Type, Condition, Category) and Search logic.
+             */
+            function applyFilters() {
+                const selectedType = document.querySelector('.inventory-type input[type="radio"]:checked').value;
+                const selectedConditions = Array.from(conditionCheckboxes)
+                                                .filter(checkbox => checkbox.checked)
+                                                .map(checkbox => checkbox.value);
+                
+                let selectedCategories = Array.from(categoryCheckboxes)
+                                             .filter(checkbox => checkbox.checked && checkbox.value !== 'all')
+                                             .map(checkbox => checkbox.value);
+
+                const filterByCategory = selectedCategories.length > 0;
+                const searchTerm = searchInput.value.toLowerCase().trim();
+
+                productCards.forEach(card => {
+                    const cardType = card.dataset.type;
+                    const cardCondition = card.dataset.condition;
+                    const cardCategory = card.dataset.category;
+                    const cardTitle = card.querySelector('.product-title').textContent.toLowerCase();
+                    const cardDesc = card.querySelector('.product-desc').textContent.toLowerCase();
+
+                    // --- 1. Search Filtering Logic ---
+                    let searchMatch = true;
+                    if (searchTerm && !(cardTitle.includes(searchTerm) || cardDesc.includes(searchTerm))) {
+                        searchMatch = false;
+                    }
+
+                    // --- 2. Category Filtering Logic ---
+                    let categoryMatch = false;
+                    if (!filterByCategory) {
+                        categoryMatch = true; 
+                    } else if (selectedCategories.includes(cardCategory)) {
+                        categoryMatch = true;
+                    }
+
+                    // --- 3. Type Filtering Logic ---
+                    let typeMatch = (selectedType === 'all' || selectedType === cardType);
+
+                    // --- 4. Condition Filtering Logic (Only for Pre-Loved) ---
+                    let conditionMatch = true; 
+                    
+                    if (cardType === 'pre-loved' && selectedConditions.length > 0) {
+                        if (!selectedConditions.includes(cardCondition)) {
+                            conditionMatch = false;
+                        }
+                    }
+                    
+                    // --- 5. Final Visibility Decision ---
+                    if (searchMatch && categoryMatch && typeMatch && conditionMatch) {
+                        card.style.display = 'flex'; 
+                        card.classList.remove('hidden');
+                    } else {
+                        card.style.display = 'none';
+                        card.classList.add('hidden');
+                    }
+                });
+            }
+
+            // --- 2. Scroll Listener for Header Shadow Animation ---
+            function handleScroll() {
+                // Apply 'scrolled' class if vertical scroll position is more than 50px
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            }
+            window.addEventListener('scroll', handleScroll);
+
+
+            // --- 3. Event Listeners ---
+            inventoryTypeRadios.forEach(radio => radio.addEventListener('change', applyFilters));
+            conditionCheckboxes.forEach(checkbox => checkbox.addEventListener('change', applyFilters));
+            categoryCheckboxes.forEach(checkbox => checkbox.addEventListener('change', applyFilters)); 
+            searchInput.addEventListener('input', applyFilters);
+
+            // --- 4. Functional Add to Cart Logic ---
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const productTitle = event.target.closest('.product-card').querySelector('.product-title').textContent;
+                    
+                    cartCount++;
+                    cartCountElement.textContent = `🛒 Cart (${cartCount})`;
+
+                    console.log(`✅ Added "${productTitle}" to cart! Current items: ${cartCount}`);
+
+                    // Simple visual feedback on the button
+                    button.textContent = "Added!";
+                    button.style.backgroundColor = successColor;
+                    setTimeout(() => {
+                        button.textContent = "Add to Cart";
+                        button.style.backgroundColor = primaryColor;
+                    }, 1000);
+                });
+            });
+            
+            // --- 5. Category Checkbox Logic ---
+            const allProductsCheckbox = document.querySelector('.category-filter input[value="all"]');
+            
+            allProductsCheckbox.addEventListener('change', (event) => {
+                const isChecked = event.target.checked;
+                if (isChecked) {
+                    categoryCheckboxes.forEach(cb => {
+                        if (cb.value !== 'all') {
+                            cb.checked = false;
+                        }
+                    });
+                } else if (Array.from(categoryCheckboxes).slice(1).every(cb => !cb.checked)) {
+                    event.target.checked = true;
+                }
+                applyFilters();
+            });
+
+            Array.from(categoryCheckboxes).slice(1).forEach(cb => {
+                cb.addEventListener('change', () => {
+                    allProductsCheckbox.checked = false;
+                    if (Array.from(categoryCheckboxes).slice(1).every(c => !c.checked)) {
+                         allProductsCheckbox.checked = true;
+                    }
+                    applyFilters();
+                });
+            });
+
+            // Initial call to ensure correct display
+            applyFilters();
+        });
+    </script>
+</body>
+</html>
